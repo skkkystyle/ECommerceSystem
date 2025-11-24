@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - orders-service
+      - payments-service
+
+  orders-service:
+    build: ./orders-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-orders:5432/ordersdb
+    depends_on:
+      - db-orders
+      - rabbitmq
+
+  payments-service:
+    build: ./payments-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-payments:5432/paymentsdb
+    depends_on:
+      - db-payments
+      - rabbitmq
+
+  db-orders:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ordersdb
+    ports:
+      - "5433:5432"
+
+  db-payments:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: paymentsdb
+    ports:
+      - "5434:5432"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672/api/health/checks/rabbitmq-node-health-check"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
