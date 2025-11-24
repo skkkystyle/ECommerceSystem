@@ -9,7 +9,6 @@
 - **Transactional Outbox / Inbox Pattern**
 - **Swagger UI** — для документации REST API
 - **WebSocket** — уведомления о статусе заказа
-- **Frontend** — React.js клиент (в разработке)
 
 ---
 
@@ -69,6 +68,3 @@ docker-compose up --build
 ### Очередь `order.created` не существует
 **Решение**:
 - Вручную создать очередь через UI RabbitMQ (Type: Classic, name: "order.created")
-
-#### p.s. 
-- я подвыгорел к моменту завершения этой кр так что особо ничего не жду от результатов
